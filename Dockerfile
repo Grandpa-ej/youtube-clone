@@ -1,16 +1,10 @@
 FROM python:3.7.9
 
-# Copy the project files into the container
+# Install libgl1-mesa-glx to provide libGL.so.1
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
+
 COPY . .
-
-# Install dependencies from requirements.txt
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
-
-# Install Gunicorn
-RUN pip install gunicorn
-
-# Expose the port on which the app will run
+RUN pip install "uvicorn[standard]"
 EXPOSE 5000
-
-# Run the application using Gunicorn
-CMD ["gunicorn", "server:app", "--bind", "0.0.0.0:5000"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "5000"]
